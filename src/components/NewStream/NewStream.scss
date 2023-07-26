@@ -1,0 +1,30 @@
+@import "../../styles/variables.scss";
+
+.newStream {
+  max-width: 600px;
+  margin: 107px auto;
+  padding: 30px 50px;
+  background-color: $bg-light;
+  border-radius: 8px;
+  &_content {
+    .formTitle {
+      font-size: $font-16;
+      font-weight: 700;
+      color: $white;
+      line-height: 0.8;
+      text-align: center;
+    }
+    form {
+      margin-top: 60px;
+      .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 50px;
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

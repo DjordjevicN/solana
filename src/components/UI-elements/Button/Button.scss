@@ -1,0 +1,23 @@
+@import "../../../styles/variables.scss";
+.button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  font-size: $font-16;
+  color: $white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button-primary {
+  background-color: $accent;
+}
+
+.button-secondary {
+  background-color: $secondary;
+}
+
+.button-disabled {
+  background-color: $button-disabled;
+  cursor: not-allowed;
+}
