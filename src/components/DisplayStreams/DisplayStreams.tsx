@@ -18,23 +18,17 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
   const wallet = useWallet()
   const [streams, setStreams] = useState<UserStreams[]>([])
 
-  const getStreams = async (publicKey: PublicKey) => {
-    const client = new StreamClient(
-      RPC_CLUSTER_URL,
-      Cluster.Devnet,
-      "confirmed"
-    )
-    const response = await client.get({ wallet: publicKey })
-
-    if (response.length > 0) {
-      const result: UserStreams[] = []
-      response.forEach((item) => {
-        const id = item[0]
-        const contract = item[1]
-        result.push({ id, contract })
-      })
-
-      setStreams(result)
+  const getStreams = async (walletKey: PublicKey) => {
+    try {
+      const client = new StreamClient(
+        RPC_CLUSTER_URL,
+        Cluster.Devnet,
+        "confirmed"
+      )
+      const response = await client.get({ wallet: walletKey })
+      setStreams(response.map((item) => ({ id: item[0], contract: item[1] })))
+    } catch (error) {
+      console.error("Error fetching streams:", error)
     }
   }
 
@@ -43,21 +37,15 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
       // @ts-ignore
       getStreams(wallet.publicKey)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.connected])
 
-  const checkStatus = (stream: Stream) => {
+  const checkStatus = (stream: Stream): string => {
     const currentTimestamp = Date.now() / 1000
-    let status = "Streaming"
-    if (stream.canceledAt) {
-      status = "Canceled"
-    }
-    if (currentTimestamp > stream.end) {
-      status = "Completed"
-    }
-    if (currentTimestamp < stream.start) {
-      status = "Scheduled"
-    }
-    return status
+    if (stream.canceledAt) return "Canceled"
+    if (currentTimestamp > stream.end) return "Completed"
+    if (currentTimestamp < stream.start) return "Scheduled"
+    return "Streaming"
   }
 
   const hidePartOfAddress = (address: string) => {

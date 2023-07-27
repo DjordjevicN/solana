@@ -45,27 +45,26 @@ const NewStream: FC<NewStreamProps> = ({
 
   const handleDropdownChange = (selectedToken: string) => {
     const token = tokens.find((token) => token.mint === selectedToken)
-
     if (token) {
       setFormState({ ...formState, token: token })
     }
   }
 
   const getTokenAccounts = async () => {
+    if (!wallet?.publicKey) return
     const solanaConnection = new Connection(RPC_CLUSTER_URL)
-
     const response = await solanaConnection.getParsedTokenAccountsByOwner(
-      // @ts-ignore
       wallet.publicKey,
       { programId: TOKEN_PROGRAM_ID }
     )
     const result: Tokens[] = []
     response.value.forEach((value) => {
-      const mint = value.account.data.parsed.info.mint
-      const isNative = value.account.data.parsed.info.isNative
-      const amount = value.account.data.parsed.info.tokenAmount.uiAmount
-      const uiAmount = value.account.data.parsed.info.tokenAmount.uiAmountString
-      const decimals = value.account.data.parsed.info.tokenAmount.decimals
+      const commonPath = value.account.data.parsed.info
+      const mint = commonPath.mint
+      const uiAmount = commonPath.tokenAmount.uiAmountString
+      const amount = commonPath.tokenAmount.uiAmount
+      const isNative = commonPath.isNative
+      const decimals = commonPath.tokenAmount.decimals
       if (amount > 0) {
         result.push({ mint, amount, uiAmount, decimals, isNative })
       }
@@ -77,6 +76,7 @@ const NewStream: FC<NewStreamProps> = ({
     if (wallet.connected) {
       getTokenAccounts()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet.connected])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -114,18 +114,15 @@ const NewStream: FC<NewStreamProps> = ({
 
     try {
       setLoading(true)
+      // also returns metadata and ixs
       // @ts-ignore
-      const { ixs, tx, metadata } = await client.create(createStreamParams)
-
+      const { tx } = await client.create(createStreamParams)
       setLoading(false)
-
       setTransactionSignature(tx)
-      console.log("TransactionSignature", tx)
-
       setOpenNewStreamForm(false)
     } catch (exception) {
-      // handle exception
-      console.log("exception", exception)
+      setLoading(false)
+      console.error("exception", exception)
     }
   }
 
