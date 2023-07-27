@@ -33,6 +33,7 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
         const contract = item[1]
         result.push({ id, contract })
       })
+
       setStreams(result)
     }
   }
@@ -57,11 +58,6 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
       status = "Scheduled"
     }
     return status
-  }
-  const checkDirection = (stream: Stream) => {
-    const direction =
-      stream.sender === wallet.publicKey?.toBase58() ? "Outgoing" : "Incoming"
-    return direction
   }
 
   const hidePartOfAddress = (address: string) => {
