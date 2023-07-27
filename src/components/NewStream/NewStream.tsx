@@ -5,7 +5,7 @@ import "./NewStream.scss"
 import NumberInput from "../UI-elements/NumberInput/NumberInput"
 import Dropdown from "../UI-elements/Dropdown/Dropdown"
 import { useWallet, useAnchorWallet } from "@solana/wallet-adapter-react"
-import { Connection, PublicKey } from "@solana/web3.js"
+import { Connection } from "@solana/web3.js"
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { StreamClient, getBN, Cluster } from "@streamflow/stream"
 import { RPC_CLUSTER_URL } from "../../constants/addresses"
@@ -52,7 +52,7 @@ const NewStream: FC<NewStreamProps> = ({
   }
 
   const getTokenAccounts = async () => {
-    const solanaConnection = new Connection("https://api.devnet.solana.com")
+    const solanaConnection = new Connection(RPC_CLUSTER_URL)
 
     const response = await solanaConnection.getParsedTokenAccountsByOwner(
       // @ts-ignore

@@ -77,6 +77,7 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
           label="Create new stream"
           onClick={() => setOpenNewStreamForm(true)}
         />
+
         <div className="displayStreams_content-table">
           <div className="displayStreams_content-table-header">
             <div className="displayStreams_content-table-header-item">

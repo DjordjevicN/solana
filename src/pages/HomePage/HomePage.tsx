@@ -7,9 +7,7 @@ import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationMo
 
 const HomePage = () => {
   const [openNewStreamForm, setOpenNewStreamForm] = useState(false)
-  const [transactionSignature, setTransactionSignature] = useState(
-    "asdaSdasdasdasdasda324242324234234244234sdasdasdasdasdasdaasdadadsdda"
-  )
+  const [transactionSignature, setTransactionSignature] = useState("")
   return (
     <div className="homePage">
       <Header />
