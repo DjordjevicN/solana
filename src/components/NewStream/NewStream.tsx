@@ -8,9 +8,11 @@ import { useWallet, useAnchorWallet } from "@solana/wallet-adapter-react"
 import { Connection, PublicKey } from "@solana/web3.js"
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token"
 import { StreamClient, getBN, Cluster } from "@streamflow/stream"
+import { RPC_CLUSTER_URL } from "../../constants/addresses"
 
 interface NewStreamProps {
   setOpenNewStreamForm: (value: boolean) => void
+  setTransactionSignature: (value: string) => void
 }
 interface Tokens {
   mint: string
@@ -26,11 +28,13 @@ interface FormState {
   contractName: string
 }
 
-const NewStream: FC<NewStreamProps> = ({ setOpenNewStreamForm }) => {
+const NewStream: FC<NewStreamProps> = ({
+  setOpenNewStreamForm,
+  setTransactionSignature,
+}) => {
   const wallet = useWallet()
   const anchorWallet = useAnchorWallet()
   const [loading, setLoading] = useState(false)
-  const [transactionSigniture, setTransactionSignature] = useState("")
   const [tokens, setTokens] = useState<Tokens[]>([])
   const [formState, setFormState] = useState<FormState>({
     token: null,
@@ -78,10 +82,7 @@ const NewStream: FC<NewStreamProps> = ({ setOpenNewStreamForm }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    const client = new StreamClient(
-      "https://api.devnet.solana.com",
-      Cluster.Devnet
-    )
+    const client = new StreamClient(RPC_CLUSTER_URL, Cluster.Devnet)
     const depositedAmount = getBN(
       Number(formState.amount),
       formState.token?.decimals || 0

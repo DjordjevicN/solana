@@ -4,6 +4,7 @@ import Button from "../UI-elements/Button/Button"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { PublicKey } from "@solana/web3.js"
 import { StreamClient, Cluster, Stream } from "@streamflow/stream"
+import { RPC_CLUSTER_URL } from "../../constants/addresses"
 
 interface DisplayStreamsProps {
   setOpenNewStreamForm: (open: boolean) => void
@@ -19,11 +20,12 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
 
   const getStreams = async (publicKey: PublicKey) => {
     const client = new StreamClient(
-      "https://api.devnet.solana.com",
+      RPC_CLUSTER_URL,
       Cluster.Devnet,
       "confirmed"
     )
     const response = await client.get({ wallet: publicKey })
+
     if (response.length > 0) {
       const result: UserStreams[] = []
       response.forEach((item) => {
@@ -111,9 +113,6 @@ const DisplayStreams: FC<DisplayStreamsProps> = ({ setOpenNewStreamForm }) => {
                     </div>
                     <div className="displayStreams_content-table-body-item">
                       <p className="text">{hidePartOfAddress(stream.id)}</p>
-                      {/* <p className="underText">
-                        {checkDirection(stream.contract)}
-                      </p> */}
                     </div>
                     <div className="displayStreams_content-table-body-item">
                       {startingDate}
