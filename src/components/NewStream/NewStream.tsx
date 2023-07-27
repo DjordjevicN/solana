@@ -1,4 +1,4 @@
-import { useState, FC, useEffect } from "react"
+import { useState, FC, useEffect, useCallback } from "react"
 import Button from "../UI-elements/Button/Button"
 import TextInput from "../UI-elements/TextInput/TextInput"
 import "./NewStream.scss"
@@ -49,35 +49,37 @@ const NewStream: FC<NewStreamProps> = ({
       setFormState({ ...formState, token: token })
     }
   }
-
-  const getTokenAccounts = async () => {
+  const getTokenAccounts = useCallback(async () => {
     if (!wallet?.publicKey) return
     const solanaConnection = new Connection(RPC_CLUSTER_URL)
-    const response = await solanaConnection.getParsedTokenAccountsByOwner(
-      wallet.publicKey,
-      { programId: TOKEN_PROGRAM_ID }
-    )
-    const result: Tokens[] = []
-    response.value.forEach((value) => {
-      const commonPath = value.account.data.parsed.info
-      const mint = commonPath.mint
-      const uiAmount = commonPath.tokenAmount.uiAmountString
-      const amount = commonPath.tokenAmount.uiAmount
-      const isNative = commonPath.isNative
-      const decimals = commonPath.tokenAmount.decimals
-      if (amount > 0) {
-        result.push({ mint, amount, uiAmount, decimals, isNative })
-      }
-    })
-    setTokens(result)
-  }
+    try {
+      const response = await solanaConnection.getParsedTokenAccountsByOwner(
+        wallet.publicKey,
+        { programId: TOKEN_PROGRAM_ID }
+      )
+      const result: Tokens[] = []
+      response.value.forEach((value) => {
+        const commonPath = value.account.data.parsed.info
+        const mint = commonPath.mint
+        const uiAmount = commonPath.tokenAmount.uiAmountString
+        const amount = commonPath.tokenAmount.uiAmount
+        const isNative = commonPath.isNative
+        const decimals = commonPath.tokenAmount.decimals
+        if (amount > 0) {
+          result.push({ mint, amount, uiAmount, decimals, isNative })
+        }
+      })
+      setTokens(result)
+    } catch (error) {
+      console.log(error)
+    }
+  }, [wallet.publicKey])
 
   useEffect(() => {
     if (wallet.connected) {
       getTokenAccounts()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallet.connected])
+  }, [wallet.connected, getTokenAccounts])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
